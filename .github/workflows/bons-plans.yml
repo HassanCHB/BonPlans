@@ -1,0 +1,46 @@
+name: Bons Plans Bot
+
+on:
+  schedule:
+    # Horaires en UTC. Paris = UTC+1 (hiver) ou UTC+2 (ete).
+    # 07h13/13h13/19h13 UTC -> environ 9h/15h/21h (ete) ou 8h/14h/20h (hiver) heure de Paris.
+    # Minutes decalees de l'heure pile pour eviter les pics de charge documentes par GitHub.
+    - cron: "13 7,13,19 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run bot
+        env:
+          ITAD_API_KEY: ${{ secrets.ITAD_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python3 bons_plans_bot.py
+
+      - name: Sauvegarder l'historique des offres envoyees
+        run: |
+          if ! git diff --quiet -- sent_offers.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add sent_offers.json
+            git commit -m "Update sent offers history"
+            git push
+          else
+            echo "Rien de nouveau a committer."
+          fi

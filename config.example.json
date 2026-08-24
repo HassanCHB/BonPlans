@@ -1,0 +1,11 @@
+{
+  "itad_api_key": "COLLE_ICI_TA_CLE_API_ISTHEREANYDEAL",
+  "telegram_bot_token": "COLLE_ICI_LE_TOKEN_DE_TON_BOT_TELEGRAM",
+  "telegram_chat_id": "COLLE_ICI_TON_CHAT_ID_OU_@NOM_DE_CANAL",
+  "itad_country": "FR",
+  "channel_link": "",
+  "affiliate_links": [
+    {"label": "GOG", "url": ""},
+    {"label": "Fanatical", "url": ""}
+  ]
+}
